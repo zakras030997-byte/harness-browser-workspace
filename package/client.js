@@ -60,7 +60,7 @@ window.__ModuleLoader__.load({id:'@anodhas/dsh-browser-workspace',factory:()=>{
  exports.apply=function(ctx){
 
   installInternalBrowserClient(ctx);
-  let stopFeed=()=>{},sessionId,currentUrl,card,iframe,frameTimer,stopPosition=()=>{};const dismissed=new Map(),seen=new Map();
+  let stopFeed=()=>{},sessionId,currentUrl,card,iframe,frameTimer,stopPosition=()=>{};const dismissed=new Map(),seen=new Map();let notice,noticeTimer,previewDisposed=false;const requests=new Set();
   function remove(){stopPosition();stopPosition=()=>{};clearTimeout(frameTimer);frameTimer=undefined;card?.remove();card=iframe=undefined;}
   function show(url,viewKey=url){if(dismissed.get(sessionId)===viewKey)return;if(currentUrl===url&&card){card.refreshChain?.(viewKey);return;}remove();currentUrl=url;let pageUrl=url,pageKey=url,groupMode=false,groupTimer,refreshing=false,refreshAgain=false,currentViewKey=viewKey,groupPages=[],visiblePages=[],followers=new Map(),frontId;const hiddenPages=new Set();
    card=document.createElement('section');card.dataset.anodhasBrowserPreview='';card.setAttribute('aria-label','Браузер агента');
@@ -70,7 +70,44 @@ window.__ModuleLoader__.load({id:'@anodhas/dsh-browser-workspace',factory:()=>{
    const expand=document.createElement('button');expand.textContent='⛶';expand.title='Развернуть / свернуть';expand.setAttribute('aria-label',expand.title);let expanded=false,small={width:'180px',height:'190px'};expand.onclick=()=>{if(!expanded)small={width:card.style.width,height:card.style.height};expanded=!expanded;Object.assign(card.style,expanded?{width:'min(1000px,85vw)',height:'75vh'}:small);layoutFollowers();fit();};
    const close=document.createElement('button');close.textContent='×';close.title='Закрыть страницу';close.setAttribute('aria-label',close.title);
    let acting=false;const ownerSession=sessionId;
-   async function command(action,target=pageUrl){if(acting)return;acting=true;try{const r=await fetch(target+'state',{cache:'no-store'});if(!r.ok)throw Error('Браузер недоступен');const state=await r.json();if(!state.capabilities?.[action])throw Error('Старая сессия не поддерживает управление страницей');if(action==='close'||state.source==='chrome'){const response=await fetch(target+'control',{method:'POST',headers:{'Content-Type':'application/json','X-Anodhas-Viewer':'1'},body:JSON.stringify({action,pageId:state.pageId})});if(!response.ok)throw Error('Действие не подтверждено; страница оставлена');}else{ctx.sidebarRight.openTab('browser',{params:{url:target+'?interactive=1'}});}if(groupMode){hiddenPages.add(target);await refreshChain();}else{dismissed.set(ownerSession,currentViewKey);if(card===ownerCard)remove();}}catch(error){title.textContent='Ошибка';title.title=error.message;unavailable.textContent=error.message;unavailable.style.display='block';}finally{acting=false;}}
+   function notify(message){
+    if(previewDisposed)return;
+    clearTimeout(noticeTimer);notice?.remove();notice=document.createElement('div');
+    notice.dataset.anodhasBrowserNotice='';notice.setAttribute('role','status');notice.textContent=message;
+    Object.assign(notice.style,{position:'fixed',bottom:'28px',left:'50%',transform:'translateX(-50%)',zIndex:'220',maxWidth:'min(440px,85vw)',padding:'10px 14px',borderRadius:'12px',background:'#24202e',color:'#eee',font:'12px system-ui',boxShadow:'0 6px 24px #0006',pointerEvents:'none'});
+    document.body.append(notice);noticeTimer=setTimeout(()=>{notice?.remove();notice=undefined;},7000);
+   }
+   async function request(endpoint,options={},timeout=5000){
+    const controller=new AbortController();requests.add(controller);const timer=setTimeout(()=>controller.abort(),timeout);
+    try{const response=await fetch(endpoint,{...options,signal:controller.signal});
+     if(!response.ok)throw Error('Источник не подтвердил действие');
+     return await response.json();
+    }finally{clearTimeout(timer);requests.delete(controller);}
+   }
+   function hidePreview(target){
+    if(ownerCard!==card)return;
+    if(groupMode){hiddenPages.add(target);visiblePages=groupPages.filter(p=>!hiddenPages.has(p.previewUrl));if(visiblePages.length){renderPages(groupPages);return;}}
+    dismissed.set(ownerSession,currentViewKey);remove();
+   }
+   async function command(action,target=pageUrl){
+    if(ownerCard!==card)return;
+    if(action==='close')hidePreview(target);
+    if(acting){if(action==='close')notify('Окошко скрыто. Предыдущее действие ещё выполняется; закрытие источника не подтверждено.');return;}
+    acting=true;
+    try{
+     const state=await request(target+'state',{cache:'no-store'});
+     if(action==='close'&&state.open===false){notify('Окошко скрыто. Источник уже закрыт.');return;}
+     if(!state.capabilities?.[action])throw Error('Эта сессия не поддерживает действие');
+     if(action==='close'||state.source==='chrome')await request(target+'control',{method:'POST',headers:{'Content-Type':'application/json','X-Anodhas-Viewer':'1'},body:JSON.stringify({action,pageId:state.pageId})},10000);
+     else ctx.sidebarRight.openTab('browser',{params:{url:target+'?interactive=1'}});
+     if(action==='close')notify(state.source==='computer'?'Просмотр отключён. Приложение продолжает работать.':'Вкладка закрыта.');
+     else if(groupMode){hiddenPages.add(target);await refreshChain();}
+     else{dismissed.set(ownerSession,currentViewKey);if(card===ownerCard)remove();}
+    }catch(error){
+     if(action==='close')notify('Окошко скрыто. Закрытие источника не подтверждено; автоматического повтора не будет.');
+     else if(ownerCard===card){title.textContent='Ошибка';title.title=error.message;unavailable.textContent=error.message;unavailable.style.display='block';}
+    }finally{acting=false;}
+   }
    close.onclick=()=>command('close');
    for(const b of [expand,close]){Object.assign(b.style,{background:'transparent',color:'inherit',border:'none',fontSize:'16px',cursor:'pointer'});bar.append(b);}
    const counter=document.createElement('button');counter.textContent='1';counter.setAttribute('aria-label','Вкладки этого треда: 1');counter.style.display='none';Object.assign(counter.style,{background:'transparent',border:'0',color:'inherit',fontSize:'11px',cursor:'pointer'});bar.append(counter);
@@ -140,7 +177,7 @@ window.__ModuleLoader__.load({id:'@anodhas/dsh-browser-workspace',factory:()=>{
     const chosen=chain?{...chain,key:latestExplicit??chain.key}:last??seen.get(sessionId);if(chosen){seen.set(sessionId,chosen);show(chosen.url,chosen.key);}
    }stopFeed=feed.subscribe(update);update();
   }
-  ctx.effect(()=>{const stop=ctx.uiSession.adapter.current.subscribe(select);select();return()=>{stop();stopFeed();remove();};},'anodhas-browser-preview');
+  ctx.effect(()=>{const stop=ctx.uiSession.adapter.current.subscribe(select);select();return()=>{previewDisposed=true;for(const request of requests)request.abort();requests.clear();clearTimeout(noticeTimer);notice?.remove();stop();stopFeed();remove();};},'anodhas-browser-preview');
  };
  return exports;
 }});

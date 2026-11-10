@@ -1,6 +1,6 @@
 {
   "name": "@anodhas/dsh-browser-workspace",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Internal browser, isolated Chromium, Chrome extension, live cards and background Mac window tools for DeepSeek Harness",
   "license": "MIT",
   "author": "ANODHAS AI",

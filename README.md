@@ -18,7 +18,7 @@ Computer Use использует библиотеку [Cua Driver 0.44.0](https
 
 ## Установка одним пакетом
 
-1. Скачайте **ANODHAS-Browser-Computer-Workspace-0.2.0.zip** из [Releases](https://github.com/zakras030997-byte/harness-browser-workspace/releases). Распакуйте архив.
+1. Скачайте **ANODHAS-Browser-Computer-Workspace-0.2.1.zip** из [Releases](https://github.com/zakras030997-byte/harness-browser-workspace/releases). Распакуйте архив.
 2. Завершите задачи Harness и закройте его через **⌘Q**. Установщик сам приложения не останавливает.
 3. Запустите **Install.command** из архива. Нужны Интернет и оригинальный Harness в `/Applications/DeepSeek Harness.app`. Node.js и npm отдельно устанавливать не требуется: используется runtime Harness.
 4. Запустите **DeepSeek Harness ANODHAS Browser.app** из `~/Applications`.
@@ -76,3 +76,7 @@ npm pack --ignore-scripts
 ```
 
 `.tgz` — только bundle для разработчиков: для нативного Browser и окон Mac также нужен подготовленный carrier. Обычным пользователям предназначен ZIP с Install.command. Лицензия кода ANODHAS — MIT; upstream-компоненты сохраняют свои лицензии и notices.
+
+## Закрытие миниатюры
+
+Крестик сразу скрывает карточку. Закрытие исходной вкладки подтверждается отдельно: при потере связи или истечении ожидания интерфейс сообщает, что закрытие источника не подтверждено, и не повторяет команду автоматически. Если окно Mac просматривается через Computer Use, отключается только просмотр — само приложение продолжает работать.
