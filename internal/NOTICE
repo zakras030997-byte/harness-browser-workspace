@@ -1,0 +1,5 @@
+ANODHAS Internal Browser — Copyright (c) 2026 ANODHAS AI, MIT.
+
+The companion patch extends DeepSeek Harness 0.2.2-rc.1 (MIT), Copyright (c) 2026 DeepSeek. The original application is not distributed in this npm package. Its copyright and license notices remain in the separately prepared local application copy.
+
+Electron is a separate MIT-licensed runtime. No Electron binary is distributed in the npm package.

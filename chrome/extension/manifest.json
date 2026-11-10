@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "ANODHAS Browser Workspace",
+  "version": "0.1.0",
+  "description": "Background robot tabs and live previews for DeepSeek Harness. Explicit connection only.",
+  "permissions": [
+    "debugger",
+    "tabs",
+    "tabGroups",
+    "storage",
+    "nativeMessaging"
+  ],
+  "background": {
+    "service_worker": "worker.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "🤖 Вкладки агента",
+    "default_popup": "popup.html"
+  },
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmqmYkN1+SgHpmCITYF967ExDm15krm+cdJzyiBnqSKo2zQS1Qx/2nSOMSFv6feO8hdMV+mDg0Lv2glrog+wAorpV0IoW1Hhjat1yJKlQE9NeIwnfSHMbl9SoDDxDrwt/e21aFNmBkOvRZ64ZA9TMDeo+eMozFvW1NLDigTu5QVz8KBZEU3nKbcoP/O3Yxnezp7pBevHikwVQ9jATLgd2FHA8q7IAeSmrJrSIXnCgCMCihfVhLEy4GiW0CQPBR1jJbE551/EqN6SQBrmdWCeSgTmQGZ5L1tNtSi42u2boM/ybuxO6bC9sxFqYTPVVeIhLNkjZFMs9Wi6HFUPEs1t1sQIDAQAB"
+}

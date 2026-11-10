@@ -1,0 +1,3 @@
+- insert:
+    - id: anodhas-internal-browser
+      name: "@anodhas/dsh-internal-browser"

@@ -1,0 +1,11 @@
+ANODHAS Browser Workspace — MIT, Copyright (c) 2026 ANODHAS AI.
+
+package/session-mcp.mjs and package/chrome-session-mcp.mjs adapt the Session MCP implementation in DeepSeek Harness 0.2.2-rc.1.
+DeepSeek Harness: https://github.com/deepseek-ai/deepseek-harness
+Copyright (c) 2026 DeepSeek. Licensed under the MIT License.
+The complete MIT terms appear in LICENSE and apply to this adaptation.
+
+Playwright MCP / Playwright are separate dependencies, distributed under their own Apache-2.0 notices; dependencies and browser binaries are not vendored in this archive.
+Chrome and DeepSeek Harness are third-party products. This is an independent ANODHAS AI plugin.
+
+Computer Use embeds Cua Driver 0.44.0 (MIT), Copyright Cua AI, Inc. Source: https://github.com/trycua/cua/tree/cua-driver-rs-v0.44.0 . The pinned runtime archive supplies LICENSE and THIRD_PARTY_NOTICES.md next to the executable inside the prepared carrier.

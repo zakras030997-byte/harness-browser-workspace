@@ -1,0 +1,15 @@
+- insert:
+    - id: anodhas-browser-use
+      name: "@deepseek-ai/dsh-browser-use"
+    - id: anodhas-browser-isolated
+      name: "@anodhas/dsh-browser-workspace/provider"
+    - id: anodhas-browser-workspace-ui
+      name: "@anodhas/dsh-browser-workspace"
+    - id: anodhas-browser-chrome
+      name: "@anodhas/dsh-browser-workspace/chrome-provider"
+    - id: anodhas-browser-chrome-chain
+      name: "@anodhas/dsh-browser-workspace/chrome-chain"
+    - id: anodhas-browser-native
+      name: "@anodhas/dsh-browser-workspace/internal"
+    - id: anodhas-browser-computer
+      name: "@anodhas/dsh-browser-workspace/computer"

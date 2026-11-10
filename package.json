@@ -1,0 +1,75 @@
+{
+  "name": "@anodhas/dsh-browser-workspace",
+  "version": "0.2.0",
+  "description": "Internal browser, isolated Chromium, Chrome extension, live cards and background Mac window tools for DeepSeek Harness",
+  "license": "MIT",
+  "author": "ANODHAS AI",
+  "type": "module",
+  "main": "index.mjs",
+  "exports": {
+    ".": "./index.mjs",
+    "./provider": "./package/provider.mjs",
+    "./chrome-provider": "./package/chrome-provider.mjs",
+    "./chrome-chain": "./package/chrome-chain.mjs",
+    "./client": "./package/client.js",
+    "./package.json": "./package.json",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./internal": "./internal/index.mjs",
+    "./computer": "./computer/index.mjs"
+  },
+  "files": [
+    "index.mjs",
+    "package",
+    "chrome",
+    "lib",
+    "scripts",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE",
+    "NOTICE",
+    "CHANGELOG.md",
+    "VALIDATION.md",
+    "docs",
+    "internal",
+    "computer",
+    "Install.command"
+  ],
+  "engines": {
+    "node": ">=24.9.0",
+    "dsh": "0.2.2-rc.1"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-api-session-controller",
+        "@deepseek-ai/dsh-client-ui-session",
+        "@deepseek-ai/dsh-client-ui-sidebar-right"
+      ]
+    }
+  },
+  "dependencies": {
+    "@deepseek-ai/dsh-browser-use": "0.2.2-rc.1",
+    "@deepseek-ai/dsh-experimental-browser-use-runtime": "0.2.2-rc.1",
+    "@deepseek-ai/dsh-mcp-client": "0.2.2-rc.1",
+    "@deepseek-ai/dsh-scope": "0.2.2-rc.1",
+    "@deepseek-ai/dsh-tools": "0.2.2-rc.1",
+    "@playwright/mcp": "0.0.80",
+    "playwright": "1.63.0-alpha-2026-08-31",
+    "yaml": "2.8.1"
+  },
+  "scripts": {
+    "test": "node scripts/run-tests.cjs",
+    "check": "node scripts/check-package.cjs",
+    "setup:chrome": "node scripts/setup-chrome.cjs",
+    "install:browser": "node scripts/install-browser.cjs",
+    "test:native": "node --test internal/test/*.test.cjs",
+    "test:computer": "node --test test/computer-test.cjs test/installer-test.cjs"
+  },
+  "devDependencies": {
+    "@electron/asar": "4.0.1"
+  }
+}

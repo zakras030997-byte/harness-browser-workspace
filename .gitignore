@@ -1,0 +1,13 @@
+node_modules/
+*.tgz
+.DS_Store
+artifacts/
+test/*-test.json
+test/*-proof.png
+
+.test-state/
+runtime/
+*.app/
+installation.json
+test/*-test.json
+test/*-proof.png

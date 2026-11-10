@@ -1,0 +1,5 @@
+const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),os=require('node:os');
+test('archive overlay preserves untouched files and unpacked metadata',async()=>{
+ const a=await import('@electron/asar'),overlay=require('../scripts/asar-overlay.cjs'),temp=fs.mkdtempSync(path.join(os.tmpdir(),'anodhas-asar-'));
+ try{const src=path.join(temp,'source');fs.mkdirSync(src);fs.writeFileSync(path.join(src,'one'),'original');fs.writeFileSync(path.join(src,'two'),'keep');await a.createPackage(src,path.join(temp,'a.asar'));overlay.patch(path.join(temp,'a.asar'),path.join(temp,'b.asar'),{one:Buffer.from('changed size'),three:Buffer.from('new')});assert.equal(a.extractFile(path.join(temp,'b.asar'),'one').toString(),'changed size');assert.equal(a.extractFile(path.join(temp,'b.asar'),'two').toString(),'keep');assert.equal(a.extractFile(path.join(temp,'b.asar'),'three').toString(),'new');assert.equal(overlay.read(path.join(temp,'a.asar'),'one').toString(),'original');}finally{fs.rmSync(temp,{recursive:true,force:true});}
+});
