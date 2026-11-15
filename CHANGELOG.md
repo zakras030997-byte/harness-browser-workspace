@@ -1,3 +1,13 @@
+# 0.4.0 · Shared DevTools browser core
+
+- Default extension-free Google Chrome with a client window, chat-owned tabs and a shared verified public-read catalog. OpenCode adapter included as source, never registered by the Harness installer.
+- SSO redirects keep ownership; stale URLs yield a structured result; exact-owner closing is independent of page URL. Tab failures and unknown console outcomes remain isolated.
+- Role/exact-name form targeting, legacy selector compatibility and distinct missing/ambiguous/invalid-selector errors.
+- Public read learning, verified replacement without duplicates, bounded SQLite memory and retention.
+- One-time macOS Automation setup for blank tabs in the exact agent window; website actions remain DevTools. Universal local helper source and binary included.
+- Existing Computer Use fixes retained. Installer uses official bundled Node; no extension/Chromium setup, app/signature/updater patch or OpenCode configuration changes. Busy shared-runtime upgrades refuse instead of stopping clients.
+- Legacy extension recipes and browser mini-cards are not migrated/enabled by default. Private API learning remains unsupported in the new core.
+
 # 0.3.1 · Computer Use target validation
 
 - Explicit snapshot tokens in action_elements; stale/unknown tokens and text input to noneditable elements are refused before dispatch.

@@ -1,4 +1,17 @@
-# Validation ·0.3.1 ·15 November2026
+# Validation · 0.4.0 · 15 November 2026
+
+## New shared core
+
+- 19 automated core/adapter/real-Chrome checks cover two-way public learning, fresh direct replay, deduplication/revision CAS, TTL/pinning/caps, concurrent SQLite writes, authorization denial, actual host identity, cancellation, private scope and controlled shutdown.
+- Real Chrome tests include controlled cross-origin HTTPS 302 to a login page, snapshot/console/screenshot after redirect, stale URL/foreign-chat denial, timed-out console plus working sibling tab, closure after navigation and recovery after context close.
+- Separate visible-window check: two authenticated client adapters used one service and distinct client windows; an additional Harness tab remained in its own window. Launch, role fill, one click, snapshot and close kept the original frontmost process unchanged. The native helper creates a blank tab without a URL; navigation is DevTools.
+- Existing official Harness chat on Luna Off: memory → open/read → inert local form → role textbox fill → fresh snapshot → exact-name button once → console postcondition text/count=1 → second tab in the same Harness window → read → both close → empty owned tabs. All results passed; an independent focus meter recorded only the original foreground application throughout.
+- Existing OpenCode acceptance before packaging: real memory, page read/open/close, console, disposable cookie roundtrip/removal and exact-role form. Its permission conflict uses independent adapter actions; the built-in Desktop browser gate remains intact. Publishing this version does not install or change that working client.
+- Root package includes shared core/native helper, default DevTools registration and the earlier Computer Use fixes. Public installer adds an explicit one-time setup tool; it does not grant global tool permissions.
+
+Public recipes only: old specialized private YouTube extension replay is not part of the new default and is not a readiness blocker. Legacy data is not deleted. No claim of automatic private API inference, universal site learning or unchanged account sessions after every browser lifecycle.
+
+## Earlier retained verification
 
 ## Confirmed locally
 

@@ -1,7 +1,7 @@
 {
   "name": "@anodhas/dsh-browser-workspace",
-  "version": "0.3.1",
-  "description": "Harness Use: browser and computer workspace, learned read requests and bounded site memory",
+  "version": "0.4.0",
+  "description": "Harness Use: shared DevTools Chrome core, learned public reads and background Computer Use",
   "license": "MIT",
   "author": "ANODHAS AI",
   "type": "module",
@@ -14,7 +14,10 @@
     "./client": "./package/client.js",
     "./package.json": "./package.json",
     "./cordis.patch.yml": "./cordis.patch.yml",
-    "./computer": "./computer/index.mjs"
+    "./computer": "./computer/index.mjs",
+    "./shared-browser": "./shared-browser/index.cjs",
+    "./opencode-plugin": "./shared-browser/opencode-plugin/index.mjs",
+    "./shared-provider": "./shared-browser/harness-plugin/index.mjs"
   },
   "files": [
     "index.mjs",
@@ -31,7 +34,8 @@
     "docs",
     "computer",
     "Install.command",
-    "pnpm-lock.yaml"
+    "pnpm-lock.yaml",
+    "shared-browser"
   ],
   "engines": {
     "node": ">=24.9.0",
@@ -67,7 +71,9 @@
     "install:browser": "node scripts/install-browser.cjs",
     "test:computer": "node --test test/computer-test.cjs test/installer-test.cjs test/computer-direct-test.cjs",
     "test:learning": "node test/test-memory.cjs && node test/test-refresh.cjs && node test/test-router.cjs && node test/test-private.mjs",
-    "build:installer": "node scripts/build-installer.cjs"
+    "build:installer": "node scripts/build-installer.cjs",
+    "test:shared": "node --test test/shared-browser-test.cjs test/shared-browser-plugin-test.cjs test/shared-browser-real-test.cjs test/shared-browser-shared-test.cjs",
+    "build:native": "node scripts/build-native.cjs"
   },
   "devDependencies": {}
 }

@@ -15,4 +15,6 @@ jobs:
       - run: npm test
       - run: npm run test:computer
       - run: npm run test:learning
+      - run: npm run build:native
+      - run: npm run test:shared
       - run: npm pack --ignore-scripts
