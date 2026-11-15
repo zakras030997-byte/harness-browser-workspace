@@ -1,3 +1,12 @@
+#0.3.0 · Harness Use
+
+- Official signed Harness0.2.2-rc.3 plugin installation/upgrade; no app clone, app.asar patch or updater/signature modification. Legacy native Electron sidebar overlay removed.
+- Chrome-owned background windows, learned public read contracts, private YouTube account-menu learning/replay and common read router.
+- Page-scoped verified route refresh/deduplication, bounded site retention and memory status.
+- Browser JavaScript console/session metadata and explicit same-origin reads. Cookies are not exported into route memory.
+- Computer Use moved to a package-owned direct/embedded helper with lazy startup and EOF cleanup. No standalone app or permission bypass.
+- Public extension identity preserved; mismatched native host name corrected. Profile update supports same-destination upgrades and explicit legacy migration.
+
 # Изменения
 
 ## 0.2.1

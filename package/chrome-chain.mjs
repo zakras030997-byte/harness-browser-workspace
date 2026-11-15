@@ -1,4 +1,5 @@
-import {defineTool} from '@deepseek-ai/dsh-tools';
+import {runtimeSdk} from '../lib/runtime-sdk.mjs';
+const {defineTool}=await runtimeSdk('@deepseek-ai/dsh-tools');
 import config from '../lib/config.cjs';
 import clients from '../chrome/agent-client.cjs';
 import previews from '../chrome/preview.cjs';

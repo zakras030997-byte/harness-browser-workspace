@@ -1,6 +1,6 @@
 const fs=require('node:fs'),path=require('node:path');
 const root=path.resolve(__dirname,'..');
-const skip=new Set(['node_modules','.git','artifacts','.test-state','runtime']);
+const skip=new Set(['node_modules','.git','artifacts','.test-state','runtime','dist']);
 function walk(dir){return fs.readdirSync(dir,{withFileTypes:true}).flatMap(e=>skip.has(e.name)?[]:e.isDirectory()?walk(path.join(dir,e.name)):[path.join(dir,e.name)]);}
 for(const file of walk(root)){
   if(file===__filename)continue;

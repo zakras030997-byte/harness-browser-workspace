@@ -1,18 +1,19 @@
-import {defineTool} from '@deepseek-ai/dsh-tools';
+import {runtimeSdk} from '../lib/runtime-sdk.mjs';
+const {defineTool}=await runtimeSdk('@deepseek-ai/dsh-tools');
 import schema from './schemas.json' with {type:'json'};
 import broker from './host-broker.cjs';
 import transport from './transport.cjs';import core from './core.cjs';import preview from './preview.cjs';
 export const name='anodhas-computer-windows';export const inject=['tools'];
-export async function apply(ctx){const host=await broker.start();let driver,windows,pending;const previews=new Map(),registered=new WeakSet();
+export async function apply(ctx){const host=await broker.start();let driver,windows,pending,disposed=false;const previews=new Map(),registered=new WeakSet(),owners=new Set();
  const dsl=v=>Object.fromEntries(Object.entries(v).filter(([k])=>['type','description','title','default','examples','enum','const','items'].includes(k)).map(([k,x])=>[k,k==='items'?dsl(x):x]));
- const get=async()=>{if(windows)return windows;return pending??=(host.connection().then(c=>windows=new core.Windows(driver=transport.transport(c))).catch(e=>{pending=undefined;throw e;}));};
- async function cleanup(owner){await previews.get(owner)?.close();previews.delete(owner);await windows?.release(owner);}
- ctx.effect(()=>async()=>{for(const owner of [...previews.keys()])await cleanup(owner);await driver?.close();await host.close();},'computer-window-cleanup');
- const owner=e=>{if(!e.agent)throw Error('Live Harness chat required');if(!registered.has(e.agent)){registered.add(e.agent);e.agent.ctx.effect(()=>()=>cleanup(e.agent.id),'computer-window-owner');}return e.agent.id;};
+ const get=async()=>{if(disposed)throw Error('Computer Use plugin is closing');if(windows)return windows;return pending??=(host.connection().then(async c=>{driver=transport.transport(c);await driver.ready;if(disposed){await driver.close();throw Error('Computer Use plugin closed during startup');}return windows=new core.Windows(driver);}).catch(async e=>{await driver?.close();pending=undefined;throw e;}));};
+ async function cleanup(owner){await previews.get(owner)?.close();previews.delete(owner);await windows?.release(owner);owners.delete(owner);}
+ ctx.effect(()=>async()=>{disposed=true;await pending?.catch(()=>{});await Promise.allSettled([...owners].map(cleanup));await driver?.close();await host.close();},'computer-window-cleanup');
+ const owner=e=>{if(!e.agent)throw Error('Live Harness chat required');owners.add(e.agent.id);if(!registered.has(e.agent)){registered.add(e.agent);e.agent.ctx.effect(()=>()=>cleanup(e.agent.id),'computer-window-owner');}return e.agent.id;};
  async function result(v){const content=v?.content;if(!Array.isArray(content))return v;const store=ctx.get?.('attachments'),images=content.filter(b=>b.type==='image');const attachments=store&&images.length?await store.saveImages(images.map(b=>({data:Buffer.from(b.data,'base64'),mediaType:b.mimeType}))):[];return {result:transport.value(v),attachments};}
  function register(name,description,parameters,execute){ctx.tools.register(defineTool({name:'computer_'+name,description,parameters,output:{schema:{type:'object',additionalProperties:true},render:(_a,v)=>[{type:'text',text:JSON.stringify({...v,attachments:undefined})},...(v.attachments??[]).map(attachment=>({type:'image',attachment}))]},async execute(a,e){return result(await execute(a,owner(e)));}}));}
- register('status','Check the embedded Computer Use bridge. Does not request OS grants or launch applications.',{},async()=>({...await host.status(),mode:'background window only',permissionOwner:'DeepSeek Harness',separateApplication:false}));
- register('permissions','Read driver Accessibility and Screen Recording permission status; no prompt.',{},async(_a,o)=>{const w=await get();return w.call('check_permissions',{prompt:false,session:w.session(o)});});
+ register('status','Inspect package-owned Computer Use helper availability. Does not start the helper, grant OS permissions or launch a separate app.',{},async()=>({...await host.status(),...driver?{helper:driver.status()}:{},mode:'background window only',permissionOwner:'confirm with computer_permissions',separateApplication:false}));
+ register('permissions','Start the package-owned helper lazily and read its actual Accessibility and Screen Recording status without prompting or granting permissions. Missing grants require the owner in System Settings.',{},async(_a,o)=>{const w=await get();return w.call('check_permissions',{prompt:false,session:w.session(o)});});
  register('apps','List running and installed Mac applications. Select only the owner-requested app. Never activate applications.',{},async(_a,o)=>{const w=await get();return w.call('list_apps',{session:w.session(o)});});
  register('windows','List windows of one running app, including off-Space windows. Does not raise them.',{pid:{type:'integer',required:true}},async(a,o)=>{const w=await get();return w.call('list_windows',{pid:a.pid,on_screen_only:false,session:w.session(o)});});
  register('bind_window','Lease an exact existing app window to THIS chat. Other chats cannot drive it until released. Owner should open and place it first.',{pid:{type:'integer',required:true},window_id:{type:'integer',required:true}},async(a,o)=>(await get()).bind(o,a.pid,a.window_id));

@@ -11,3 +11,6 @@ runtime/
 installation.json
 test/*-test.json
 test/*-proof.png
+
+dist/
+release-checks/

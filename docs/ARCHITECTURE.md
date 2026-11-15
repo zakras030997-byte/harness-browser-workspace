@@ -1,17 +1,12 @@
-# Архитектура и откат
+# Архитектура0.3.0
 
-Root bundle подключает browser-use, изолированный provider, Chrome provider, цепочку карточек, native Browser bridge и оконные инструменты. UI-модуль единый. Настройки живут на уровне профиля Desktop; состояния, вкладки и оконные leases привязаны к агенту/чату.
+Official signed Harness → profile bundle → scoped tools. App bundle/updater не меняются.
 
-Native Browser: точный webview и lease его владельца, IPC проверяет отправителя. У страницы сохраняются sandbox/contextIsolation и запрет Node. HttpOnly cookies доступны только для текущего сайта и по явному запросу, значения по умолчанию скрыты.
+- Изолированный Chromium: публичный Playwright MCP, отдельный live-session context, loopback capability preview.
+- Внешний Chrome: nativeMessaging→private Unix broker→extension; actual chat identity фиксируется handshake и не подменяется params. Собственные окна/группы и привязка tabId к чату. Host name com.anodhas.browser_workspace.
+- Public learner: observed JSON GET, две пробы, одна переменная, echo/schema validation, credential-free replay before publish. Shared metadata only; source page/fields задают ключ обновления маршрута.
+- Private YouTube: narrowly allowlisted observed account_menu READ, Chrome-local cookies/fresh auth, account fingerprint, per-chat recipe, no response cache. Нет универсального private POST compiler.
+- Site memory: stable stateDir, byte/count caps, tiers/expiry on use, no background timer, existing task chat history outside scope.
+- Computer: package-owned signed cua-driver direct/embedded, standard policy, no run-script/unrestricted/standalone app, lazy spawn and stdin EOF; core window leases and read-only preview.
 
-Computer Use: Electron main запускает встроенный executable напрямую в embedded mode. Он использует разрешения родительского Harness. Unix-сокет находится в собственном каталоге 0700 с случайным именем. В backend нет fallback к отдельно установленному CuaDriver.app, общему daemon или foreground. Preview использует отдельную сессию, чтобы не сбивать AX tokens агента. Изображения сохраняются штатным attachment store Harness. Рабочий runtime штатно останавливается при закрытии приложения.
-
-Мост Computer Use соединяет backend напрямую с Electron main через отдельный Unix-сокет; метаданные и токен доступны только владельцу (0600/0700). Он не зависит от выбранного чата или загрузки UI. Браузерные preview-endpoints ограничены loopback Host, случайным токеном, origin dsh-app://app и пользовательским заголовком. Cookies, приватные URL, pairing-конфигурации и снимки аккаунтов не входят в репозиторий.
-
-## Откат
-
-Закройте Harness через ⌘Q. Установочная квитанция находится в `~/.dsh/extensions/anodhas-browser-workspace/installation.json`, резервные копии профиля — в `~/.dsh/profiles/desktop/.anodhas-browser-backups/`.
-
-Если после установки профиль не менялся, восстановите package.json и cordis.patch.yml из указанной квитанцией резервной копии; удалите только ссылку node_modules/@anodhas/dsh-browser-workspace этого профиля. Если были последующие изменения, не заменяйте весь профиль: удалите только зависимость пакета и его семь известных строк по cordis.patch.yml, затем восстановите disabled у старых строк по резервной копии. Не затрагивайте другие плагины.
-
-Папку плагина, его собственный native host com.anodhas.browser_workspace и отдельную копию приложения можно удалить после завершения всех их процессов. Исходное приложение, Chrome, его личные вкладки, другие native hosts, модельные настройки и общий кэш сохраняйте. Системные разрешения при желании отзываются в штатных настройках macOS.
+Native Electron sidebar overlay прежнего0.2.x исключён из установки и exports. Git history/tag прежней версии сохраняют исходник. All page/console/connector contents remain untrusted data. Approval pipeline and task authorization remain in effect.

@@ -1,6 +1,19 @@
-// Backend talks directly to the permission-owning main process; no selected-chat or UI dependency.
-const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),net=require('node:net');
-function readHost(){const directory=path.join(process.env.DSH_HOME||path.join(os.homedir(),'.dsh'),'anodhas-computer'),file=path.join(directory,'host.json'),st=fs.lstatSync(file);if(st.isSymbolicLink()||st.uid!==process.getuid()||(st.mode&0o077))throw Error('Host metadata must be private');const v=JSON.parse(fs.readFileSync(file,'utf8'));if(v.hostBundleId!=='com.anodhas.dsh.browser-workspace'||!path.isAbsolute(v.socket)||path.basename(v.socket)!=='main.sock'||!/^anodhas-harness-/.test(path.basename(path.dirname(v.socket)))||! /^[a-f0-9]{48}$/.test(v.token))throw Error('Invalid embedded host metadata');const dir=fs.lstatSync(path.dirname(v.socket));if(dir.isSymbolicLink()||dir.uid!==process.getuid()||(dir.mode&0o077))throw Error('Host socket directory must be private');return v;}
-function call(action){return new Promise((resolve,reject)=>{let v;try{v=readHost()}catch{reject(Error('Start DeepSeek Harness ANODHAS Browser; its private host endpoint is unavailable'));return;}const c=net.createConnection(v.socket);let raw='';const timer=setTimeout(()=>{c.destroy();reject(Error('Native host response not confirmed'));},15000);c.on('error',e=>{clearTimeout(timer);reject(e)});c.once('connect',()=>c.write(JSON.stringify({action,token:v.token})+'\n'));c.on('data',b=>{raw+=b;if(raw.length>16000){c.destroy();clearTimeout(timer);reject(Error('Invalid host response'));return;}const i=raw.indexOf('\n');if(i<0)return;clearTimeout(timer);c.end();try{const r=JSON.parse(raw.slice(0,i));if(r.error)throw Error(r.error);resolve(r.result);}catch(e){reject(e);}});});}
-async function start(){return {async status(){try{return {...await call('status'),bridgeAvailable:true,foregroundFallback:false}}catch(e){return {embedded:true,bridgeAvailable:false,foregroundFallback:false,error:e.message}}},async connection(){const c=await call('connection');if(!path.isAbsolute(c.binary)||!c.binary.endsWith('/Contents/Resources/anodhas-computer/cua-driver')||!fs.statSync(c.binary).isFile()||c.hostBundleId!=='com.anodhas.dsh.browser-workspace'||!path.isAbsolute(c.socket)||path.basename(c.socket)!=='driver.sock')throw Error('Invalid embedded worker');return c;},async close(){}};}
-module.exports={start};
+// The signed Harness application is never patched. A package-owned helper is
+// started lazily by transport in stdio direct mode, without a standalone app.
+const fs=require('node:fs'),path=require('node:path');
+const defaultBinary=path.resolve(__dirname,'../runtime/cua-driver');
+function validateBinary(binary){
+ if(!path.isAbsolute(binary))throw Error('Computer Use helper path must be absolute');
+ let st;try{st=fs.lstatSync(binary);}catch{throw Error('Computer Use helper is missing; run the Browser Workspace installer');}
+ if(!st.isFile()||st.isSymbolicLink()||(st.mode&0o022))throw Error('Computer Use helper must be a regular, non-writable-by-others package file');
+ fs.accessSync(binary,fs.constants.X_OK);return binary;
+}
+async function start({binary=defaultBinary}={}){
+ let disposed=false;
+ return {
+  async status(){let available=false;try{validateBinary(binary);available=true;}catch{}return {available,direct:true,embedded:false,separateApplication:false,backgroundDaemon:false,permissionOwner:'read-check_permissions-to-confirm',foregroundFallback:false,closed:disposed};},
+  async connection(){if(disposed)throw Error('Computer Use helper provider is closed');return {binary:validateBinary(binary),mode:'direct',hostBundleId:'com.deepseek.dsh'};},
+  async close(){disposed=true;}
+ };
+}
+module.exports={start,validateBinary};

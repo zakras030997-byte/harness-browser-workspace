@@ -1,8 +1,9 @@
 // Adapted from DeepSeek Harness dsh-experimental-browser-use-runtime 0.2.2-rc.1 (MIT).
 // Local addition: expose the same scoped initialization for an existing live Agent.
 // No synthetic lifecycle events or mutation of another Agent's context/registry.
-import * as McpClient from '@deepseek-ai/dsh-mcp-client';
-import {createScope} from '@deepseek-ai/dsh-scope';
+import {runtimeSdk} from '../lib/runtime-sdk.mjs';
+const McpClient=await runtimeSdk('@deepseek-ai/dsh-mcp-client');
+const {createScope}=await runtimeSdk('@deepseek-ai/dsh-scope');
 import {SessionResources} from '@deepseek-ai/dsh-experimental-browser-use-runtime';
 export function mountSessionMcp(ctx, options) {
     const workingDirectory = ctx.get('workingDirectory');

@@ -1,0 +1,24 @@
+const fs=require('node:fs'),os=require('node:os'),path=require('node:path'),assert=require('node:assert/strict');
+const {makeSharedReads}=require('../chrome/shared-reads.cjs');
+const {makeLearnedReads}=require('../chrome/learned-reads.cjs');
+const {makeUseRouter}=require('../chrome/use-router.cjs');
+(async()=>{const dir=fs.mkdtempSync(path.join(os.tmpdir(),'harness-router-unit-'));try{
+ const shared=makeSharedReads({file:path.join(dir,'shared.json')}),a=makeLearnedReads({session:'a',storeFile:path.join(dir,'a.json'),readJSON:async url=>({id:1,name:new URL(url).pathname.split('/').at(-1)})});
+ const observations=['red','blue'].map(input=>({input,url:'https://catalog.example/resources/'+input,method:'GET',status:200,scalars:{id:1,name:input}}));
+ const learned=await a.learn({origin:'https://catalog.example',observations},['id','name']);
+ const [contract]=await a.publicContracts();shared.publish(contract);
+ const contents=fs.readFileSync(path.join(dir,'shared.json'),'utf8');assert(!contents.includes('"cache"'));assert(!contents.includes('"samples"'));assert(!contents.includes('/red'));
+ assert.equal(fs.statSync(path.join(dir,'shared.json')).mode&0o777,0o600);
+ assert.throws(()=>shared.publish({...contract,transport:'browser-session'}));
+ let reads=0,opened=0;const b=makeLearnedReads({session:'b',storeFile:path.join(dir,'b.json'),readJSON:async url=>{reads++;return {id:2,name:new URL(url).pathname.split('/').at(-1)}}});
+ const route=makeUseRouter({shared,learned:b,openAndObserve:async()=>{opened++;return {title:'Owned fixture'}}});
+ const matched=await route({url:'https://catalog.example/',input:'green',fields:['id','name']});
+ assert.equal(matched.route,'saved-request');assert.equal(matched.data.name,'green');assert.equal(reads,1);assert.equal(opened,0);
+ const fallback=await route({url:'https://other.example/',input:'word',fields:['id','name']});assert.equal(fallback.route,'browser-learning');assert.equal(opened,1);
+ const failed=makeUseRouter({shared,learned:{adoptPublic(){},async replay(){throw Error('changed schema')}},openAndObserve:async()=>{opened++;return {}}});
+ assert.equal((await failed({url:'https://catalog.example/',input:'word',fields:['name']})).route,'browser-learning');
+ assert.equal(shared.select('https://catalog.example/',['name']).matched,false);
+ shared.publish(contract);const tooLarge=makeUseRouter({shared,learned:{adoptPublic(){},async replay(){throw Error('JSON exceeds 512 KiB')}},openAndObserve:async()=>({})});assert.equal((await tooLarge({url:'https://catalog.example/',input:'huge',fields:['name']})).route,'browser-learning');assert(shared.select('https://catalog.example/',['name']).matched);
+ assert.equal(a.list().operations[0].operationId,learned.operationId);
+ console.log('PASS: shared metadata only, cross-chat adoption, no cache/account sharing, automatic match/fallback, stale contract handling, 0600');
+ }finally{fs.rmSync(dir,{recursive:true});}})().catch(e=>{console.error(e);process.exitCode=1});

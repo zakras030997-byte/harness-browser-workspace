@@ -8,4 +8,4 @@ The complete MIT terms appear in LICENSE and apply to this adaptation.
 Playwright MCP / Playwright are separate dependencies, distributed under their own Apache-2.0 notices; dependencies and browser binaries are not vendored in this archive.
 Chrome and DeepSeek Harness are third-party products. This is an independent ANODHAS AI plugin.
 
-Computer Use embeds Cua Driver 0.44.0 (MIT), Copyright Cua AI, Inc. Source: https://github.com/trycua/cua/tree/cua-driver-rs-v0.44.0 . The pinned runtime archive supplies LICENSE and THIRD_PARTY_NOTICES.md next to the executable inside the prepared carrier.
+Computer Use launches a package-owned Cua Driver 0.44.0 (MIT), Copyright Cua AI, Inc. Source: https://github.com/trycua/cua/tree/cua-driver-rs-v0.44.0 . The pinned runtime archive supplies LICENSE and THIRD_PARTY_NOTICES.md next to the executable inside the installer ZIP. The official Harness application is not redistributed or modified.

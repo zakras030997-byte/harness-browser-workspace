@@ -1,28 +1,25 @@
-# Проверка исправления 0.2.1 · 11 ноября 2026
+# Validation ·0.3.0 ·15 November2026
 
-Восьмой браузерный suite проверяет offline, тайм-аут state/control, отказ закрытия, уже закрытый источник, успешное закрытие, отсоединение просмотра Mac без завершения программы, сохранение соседей стопки и отмену запроса при выгрузке UI. Остальные семь browser suites, 4 native и 7 computer/installer тестов прошли повторно. Это локальные автоматические проверки; чистый физический другой Mac не проверялся.
+## Confirmed locally
 
-# Подтверждение проверок
+- Eight browser suites: chat ownership, personal-tab denial, explicit reveal, native framing/broker identity, per-page preview, independent close, headless form, real extension in temporary test Chromium, multi-card UI/drag/focus/dispose and unavailable-source close behavior.
+- Learning suites: inferred public path/query, private observed account-menu recipe, no persisted credentials/responses, Chrome account/fresh read checks, cross-chat denial, bounded capture/audit, timeout/no automatic retry, no late save after close, CDP object-key order independence.
+- Retention tests use controlled clocks:7day incidental,3distinct days promotion,180day familiar, important YouTube no expiry, byte/count caps preserving existing files, stale cache pruning, no per-chat copy for shared replay.
+- Route refresh tests: validated v2 replaces v1 for same source page/fields, field-order deduplication, page scope and unsupported/ambiguous fallback.
+- Installer/profile: same package upgrade without duplicate rows; unknown registrations/links denied; unrelated model/mail/drive/project configuration retained; legacy native registration disabled only with explicit migration. Signed official application inspected in dry-run without profile writes.
+- New direct Computer Use helper: real initialize→check_permissions(prompt:false)→stdin EOF, plus argument/lifecycle/UNKNOWN tests. No standalone CuaDriver.app, no app patch, no permission grants or GUI actions in this helper test. Permission booleans reflect the actual host responsibility chain; do not treat Node test grants as proof of Harness grants.
+- Global tool definitions accepted by official Harness SDK. Distribution allowlist excludes private pairing/config/cookies/chat histories/recipes and test bootstraps.
 
-Версия 0.2.0 · 10 ноября 2026 · macOS arm64, Harness 0.2.2-rc.1 build c59d10aff167ad7eefead4b3a9082fb57c8fbfe8.
+## Existing working-client E2E before portable packaging
 
-## Подтверждено
+The same existing Harness chat on Luna Off performed YouTube account menu observe→discover→save→close→fresh replay, then repeated training and selected the saved private recipe through the common router. Account display fields matched, no page/cache for replay, one recipe before/after. This validates the workflow in the working development installation, not a clean installation on another Mac.
 
-- 7 браузерных suites: headless Chromium, настоящее MV3-расширение в Chrome for Testing, фоновые ввод/клик/снимок, сохранение активной личной вкладки, разные группы чатов, отказ чужим вкладкам, точное раскрытие/закрытие одной страницы, стопка карточек, перетаскивание и сохранение фокуса поля.
-- 4 native-теста: ASAR overlay сохраняет нетронутые файлы/metadata, точные patch anchors, cookies только текущего origin с сокрытием значений по умолчанию, очередь с владельцем и без повторной доставки. Ранее native Browser отдельно прошёл реального агента в установленном Harness: две вкладки, ввод, клик, screenshot, cookies тестового сайта и закрытие одной вкладки.
-- 7 тестов оконного адаптера/установщика: реальный SDK принимает схемы инструментов; фиксированный background target; чужие/неизвестные аргументы отклоняются; preview защищён; освобождение не закрывает приложение; повторная привязка создаёт новый lifecycle; приватный app-owned IPC работает без UI; посторонние настройки профиля сохраняются.
-- Carrier собран с нуля штатным подготовщиком из оригинального приложения. Подпись проверена, hash ASAR обновлён. Служебное CFBundleName сохранено для поиска Electron helper, bundle ID/display name отдельные. Оригинал сохранён.
-- Встроенный worker реально запущен дочерним процессом новой копии Harness, с приватным сокетом и host attribution. В Harness зарегистрированы все 15 `computer_*` инструментов.
-- В отдельном AppKit-окне выполнены set_value, AXPress и обратное чтение поля/счётчика. Активное приложение до/после не сменилось. PNG окна получен; live-preview JPEG не сбил ранее полученные AX tokens.
-- UI-карточка проверена на стенде с настоящим видеопотоком этого окна: изображение видно, drag сохраняет фокус поля, расширение работает, двойной клик раскрывает read-only viewer внутри панели Harness, закрытие освобождает привязку и сохраняет Mac-приложение.
-- После удаления отдельного CuaDriver.app реальный агент в существующем тестовом чате Harness выполнил новый set_value, ровно один клик, обратное чтение `Count: 2`, получил durable image attachment и вызвал `computer_live_view`. Модель/настройки не менялись; ошибок инструментов не было. Маркер успешного отчёта: `HARNESS_EMBEDDED_AGENT_OK`.
+## Not claimed
 
-- После обнаруженной регрессии убран запуск браузерного MCP из `agent/created`: браузер включается явно через `browser_enable`, дочерним Electron-процессам задан Node-режим. Реальная проверка повторно открыла два существующих чата с сохранёнными названиями, создала новый чат и получила `SESSION_RECOVERED_OK`; затем явно подключила 25 браузерных инструментов и выполнила навигацию к локальной тестовой странице.
+- No physical second Mac or full Intel installation acceptance.
+- No capture/input E2E of the newly direct Computer Use helper from signed Harness; readback/status and window-target logic are covered separately. Existing background-delivery behavior can vary by app and TCC.
+- No native Electron sidebar control in0.3.0. Legacy carrier overlay and ad-hoc signing are removed.
+- No arbitrary authenticated site compiler, arbitrary read-only POST inference, login/CSRF chain recovery or writes learned automatically.
+- No universal performance or token-cost benchmark. Previous GitHub comparison used a fixed public API and sequential warm-context runs; private YouTube transport timing is not full model-turn latency.
 
-## Границы проверки
-
-При независимом запуске из macOS разрешения должны быть выданы самому Harness: ранние тесты запуска из Codex использовали разрешения родительского процесса. Это отдельный обязательный этап установки, права CuaDriver.app не переносятся.
-
-Визуальное чтение всего интерфейса Harness инструментом Codex CUA зависало; отображение карточки в нём отдельно глазами владельца не принималось. Проверены реальное событие агента/attachment/preview и компонент карточки на стенде с тем же видеопотоком.
-
-Независимый запуск через LaunchServices (родитель main process — launchd, PID 1) после выдачи разрешений самому Harness также проверен: AX-ввод, одно нажатие и обратное чтение, снимок. Само тестовое приложение сообщало windowOnActiveSpace=false до и после; переднее приложение не сменилось. Это подтверждает работу AppKit-окна на другом Space. SwiftUI/игры/canvas имеют ограничения. Windows/Linux, Intel E2E, любые приложения Mac и другие сборки Harness не заявлены проверенными.
+The signed upstream helper checksum/provenance and installer hashes are included with release assets. The official Harness app is not redistributed. Test JSON/screenshots are local evidence and are excluded from the package.

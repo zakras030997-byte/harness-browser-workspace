@@ -1,7 +1,7 @@
 {
   "name": "@anodhas/dsh-browser-workspace",
-  "version": "0.2.1",
-  "description": "Internal browser, isolated Chromium, Chrome extension, live cards and background Mac window tools for DeepSeek Harness",
+  "version": "0.3.0",
+  "description": "Harness Use: browser and computer workspace, learned read requests and bounded site memory",
   "license": "MIT",
   "author": "ANODHAS AI",
   "type": "module",
@@ -14,7 +14,6 @@
     "./client": "./package/client.js",
     "./package.json": "./package.json",
     "./cordis.patch.yml": "./cordis.patch.yml",
-    "./internal": "./internal/index.mjs",
     "./computer": "./computer/index.mjs"
   },
   "files": [
@@ -30,13 +29,13 @@
     "CHANGELOG.md",
     "VALIDATION.md",
     "docs",
-    "internal",
     "computer",
-    "Install.command"
+    "Install.command",
+    "pnpm-lock.yaml"
   ],
   "engines": {
     "node": ">=24.9.0",
-    "dsh": "0.2.2-rc.1"
+    "dsh": "0.2.2-rc.3"
   },
   "dsh": {
     "bundle": {
@@ -66,10 +65,9 @@
     "check": "node scripts/check-package.cjs",
     "setup:chrome": "node scripts/setup-chrome.cjs",
     "install:browser": "node scripts/install-browser.cjs",
-    "test:native": "node --test internal/test/*.test.cjs",
-    "test:computer": "node --test test/computer-test.cjs test/installer-test.cjs"
+    "test:computer": "node --test test/computer-test.cjs test/installer-test.cjs test/computer-direct-test.cjs",
+    "test:learning": "node test/test-memory.cjs && node test/test-refresh.cjs && node test/test-router.cjs && node test/test-private.mjs",
+    "build:installer": "node scripts/build-installer.cjs"
   },
-  "devDependencies": {
-    "@electron/asar": "4.0.1"
-  }
+  "devDependencies": {}
 }

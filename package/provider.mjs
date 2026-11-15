@@ -1,6 +1,7 @@
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {defineTool} from '@deepseek-ai/dsh-tools';
+import {runtimeSdk} from '../lib/runtime-sdk.mjs';
+const {defineTool}=await runtimeSdk('@deepseek-ai/dsh-tools');
 import {mountSessionMcp} from './session-mcp.mjs';
 const dir = path.dirname(fileURLToPath(import.meta.url));
 export const name = 'anodhas-browser-workspace-isolated';
