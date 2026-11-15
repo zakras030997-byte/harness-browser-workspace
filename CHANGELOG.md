@@ -1,3 +1,10 @@
+# 0.3.1 · Computer Use target validation
+
+- Explicit snapshot tokens in action_elements; stale/unknown tokens and text input to noneditable elements are refused before dispatch.
+- computer_state rejects supplied state/image arguments; callers must read the real window.
+- Real signed-Harness capture, text, button, readback, live-card and release checks; focus validation is recorded in VALIDATION.md.
+- Same plugin/profile upgrade, official signature and updater preserved.
+
 #0.3.0 · Harness Use
 
 - Official signed Harness0.2.2-rc.3 plugin installation/upgrade; no app clone, app.asar patch or updater/signature modification. Legacy native Electron sidebar overlay removed.

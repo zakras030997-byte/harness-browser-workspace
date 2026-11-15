@@ -1,4 +1,4 @@
-# Validation ·0.3.0 ·15 November2026
+# Validation ·0.3.1 ·15 November2026
 
 ## Confirmed locally
 
@@ -17,9 +17,20 @@ The same existing Harness chat on Luna Off performed YouTube account menu observ
 ## Not claimed
 
 - No physical second Mac or full Intel installation acceptance.
-- No capture/input E2E of the newly direct Computer Use helper from signed Harness; readback/status and window-target logic are covered separately. Existing background-delivery behavior can vary by app and TCC.
+- Focus-independent background input is confirmed only for the controlled AppKit form below. Other applications and TCC environments can differ.
 - No native Electron sidebar control in0.3.0. Legacy carrier overlay and ad-hoc signing are removed.
 - No arbitrary authenticated site compiler, arbitrary read-only POST inference, login/CSRF chain recovery or writes learned automatically.
 - No universal performance or token-cost benchmark. Previous GitHub comparison used a fixed public API and sequential warm-context runs; private YouTube transport timing is not full model-turn latency.
 
 The signed upstream helper checksum/provenance and installer hashes are included with release assets. The official Harness app is not redistributed. Test JSON/screenshots are local evidence and are excluded from the package.
+
+
+## Local Computer Use follow-up, 2026-11-15
+
+On official Harness 0.2.2-rc.3, in the existing tester chat on Luna Off, actual Accessibility and Screen Recording grants were confirmed. Window capture, text insertion through a fresh AX token, Apply, post-action state readback and the live Mac-window card passed against the disposable Harness CU Check AppKit fixture. Fixture output was `Готово: Harness Computer Use OK`. A second single click and release passed. No new Harness profile or client was created; app.asar and app-update.yml hashes were unchanged and deep strict codesign verification passed.
+
+The first live attempt exposed model confusion between invented element indexes and actual markdown indexes. The local follow-up now returns explicit action_elements tokens, rejects stale/unknown tokens and text input to noneditable roles, and refuses arguments to computer_state. Ten automated checks passed; one optional helper test was skipped.
+
+The first follow-up did not establish focus independence. A subsequent monitored run on Luna Off used the same existing client/chat and a fresh controlled AppKit form. The agent captured the window, inserted text, read it back, pressed Apply once, checked the output and released the lease. NSWorkspace reported the same Chrome process frontmost at both text-change and button callbacks; NSRunningApplication.current.isActive was false for the target at both callbacks. Activation notifications and 100 ms polling never observed the target frontmost. The expected output and exactly one click were confirmed independently. No automation actions switched apps during the run; the owner submitted the test prompt and switched to Chrome.
+
+The fixture's local NSApp.isActive flag became true on the button callback while both system-level focus signals remained unchanged. We therefore do not use that local AppKit flag or the helper's background label alone as evidence of global focus. This result is scoped to this form, not every application. The fixes and this validation are included in 0.3.1; original 0.3.0 assets remain unchanged.

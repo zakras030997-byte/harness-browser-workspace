@@ -1,4 +1,4 @@
-# Архитектура0.3.0
+# Архитектура 0.3.1
 
 Official signed Harness → profile bundle → scoped tools. App bundle/updater не меняются.
 

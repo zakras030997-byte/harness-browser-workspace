@@ -8,3 +8,16 @@ test('real Harness SDK accepts the registered tool schemas and releases its brok
 
 
 test('releasing and rebinding the same chat starts a fresh driver lifecycle',async()=>{const w=new Windows(fake());await w.bind('a',8,9);const first=w.session('a');await w.release('a');await w.bind('a',8,9);assert.notEqual(w.session('a'),first);await w.release('a');});
+
+
+test('real markdown tokens are explicit; invented, stale and noneditable targets cannot dispatch',async()=>{
+ const d=fake(),base=d.call.bind(d);d.call=async(n,a)=>n==='get_window_state'?{structuredContent:{snapshot_id:'s00000001',tree_markdown:'- [0] AXWindow "Check"\n  - [1] AXTextField = "Input"\n  - [2] AXButton "Применить"'}}:base(n,a);
+ const w=new Windows(d);await w.bind('a',8,9);
+ await assert.rejects(w.run('a','state',{elements:[]}),/no arguments/);
+ const state=await w.run('a','state');assert.equal(state.structuredContent.action_elements[1].element_token,'s00000001:1');
+ await assert.rejects(w.run('a','set_value',{element_token:'s00000001:2',value:'OK'}),/Refusing text/);
+ await assert.rejects(w.run('a','click',{element_token:'s00000001:4'}),/stale/);
+ await w.run('a','set_value',{element_token:'s00000001:1',value:'OK'});
+ await assert.rejects(w.run('a','click',{element_token:'s00000001:2'}),/stale/);
+ await w.run('a','state');await w.run('a','click',{element_token:'s00000001:2'});assert.equal(d.calls.at(-1)[0],'click');
+});

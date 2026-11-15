@@ -23,7 +23,7 @@ function transport(connection,{spawnImpl=spawn,timeoutMs=30000,closeTimeoutMs=50
   const id=++seq,timer=setTimeout(()=>{pending.delete(id);reject(Error('Computer Use helper timeout; action outcome UNKNOWN. Do not automatically repeat.'));},timeoutMs);
   pending.set(id,{resolve,reject,timer});child.stdin.write(JSON.stringify({jsonrpc:'2.0',id,method,params})+'\n',error=>{if(!error)return;const p=pending.get(id);if(p){pending.delete(id);clearTimeout(timer);p.reject(Error('Computer Use request was not confirmed; outcome UNKNOWN'));}});
  });}
- const ready=request('initialize',{protocolVersion:'2024-11-05',capabilities:{},clientInfo:{name:'anodhas-window-workspace',version:'0.3.0'}}).then(()=>{if(closing||ended)throw Error('Computer Use helper closed during initialization');child.stdin.write(JSON.stringify({jsonrpc:'2.0',method:'notifications/initialized'})+'\n');initialized=true;});
+ const ready=request('initialize',{protocolVersion:'2024-11-05',capabilities:{},clientInfo:{name:'anodhas-window-workspace',version:require('../package.json').version}}).then(()=>{if(closing||ended)throw Error('Computer Use helper closed during initialization');child.stdin.write(JSON.stringify({jsonrpc:'2.0',method:'notifications/initialized'})+'\n');initialized=true;});
  // Initialization can fail before the first caller awaits it; keep the rejection
  // handled while preserving the original rejected promise for the actual caller.
  ready.catch(()=>{});
